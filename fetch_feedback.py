@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+import csv
+import urllib.request
+import json
+import ssl
+from datetime import datetime
+
+# Configuration
+API_URL = "https://api.excaliban.com/feedback"  # Replace with your actual API URL
+API_KEY = "AndrewKEY1"  # Replace with your actual API key
+CSV_FILE = "feedback_data.csv"
+MAX_RESULTS = 20
+
+def fetch_feedback():
+    """Fetch feedback from the API and save to CSV file."""
+    
+    try:
+        # Make API request with authentication
+        headers = {"X-API-Key": API_KEY}
+        
+        # Create a URL with parameters
+        full_url = f"{API_URL}?limit={MAX_RESULTS}"
+        
+        print(f"Fetching up to {MAX_RESULTS} feedback items...")
+        
+        # Create a custom request with headers
+        req = urllib.request.Request(full_url, headers=headers)
+        
+        # Ignore SSL certificate verification if needed
+        context = ssl._create_unverified_context()
+        
+        # Make the request
+        with urllib.request.urlopen(req, context=context) as response:
+            # Read and decode the response
+            response_data = response.read().decode('utf-8')
+            data = json.loads(response_data)
+        
+        # Handle different response formats
+        # Adjust this based on your actual API response structure
+        if isinstance(data, dict) and "items" in data:
+            # If API returns a paginated response like {"items": [...], "total": 42}
+            feedback_items = data["items"]
+        elif isinstance(data, list):
+            # If API returns a direct list of items
+            feedback_items = data
+        else:
+            print(f"Error: Unexpected API response format: {type(data)}")
+            return False
+        
+        # Write to CSV file
+        with open(CSV_FILE, 'w', newline='') as file:
+            writer = csv.writer(file)
+            
+            # Write header row based on the feedback schema
+            writer.writerow(["ID", "Message", "App Version", "Browser", "Created At", "Status"])
+            
+            # Write data rows
+            for item in feedback_items:
+                writer.writerow([
+                    item.get("id", ""),
+                    item.get("message", ""),
+                    item.get("app_version", ""),
+                    item.get("browser", ""),
+                    item.get("created_at", ""),
+                    item.get("status", "")
+                ])
+        
+        print(f"Successfully saved {len(feedback_items)} feedback items to {CSV_FILE}")
+        return True
+        
+    except urllib.error.URLError as e:
+        print(f"Error: Failed to fetch feedback from API: {e}")
+        return False
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
+if __name__ == "__main__":
+    fetch_feedback()
