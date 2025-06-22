@@ -59,9 +59,9 @@ def fetch_feedback():
                 writer.writerow([
                     item.get("id", ""),
                     item.get("message", ""),
-                    item.get("app_version", ""),
+                    item.get("appVersion", ""),
                     item.get("browser", ""),
-                    item.get("created_at", ""),
+                    item.get("createdAt", ""),
                     item.get("status", "")
                 ])
         
