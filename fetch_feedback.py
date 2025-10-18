@@ -3,11 +3,16 @@ import csv
 import urllib.request
 import json
 import ssl
+import os
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configuration
-API_URL = "https://api.excaliban.com/feedback"  # Replace with your actual API URL
-API_KEY = "AndrewKEY1"  # Replace with your actual API key
+API_URL = os.getenv("API_URL")
+API_KEY = os.getenv("FEEDBACK_API_KEY")
 CSV_FILE = "feedback_data.csv"
 MAX_RESULTS = 20
 
