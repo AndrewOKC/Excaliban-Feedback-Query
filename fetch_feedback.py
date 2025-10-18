@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configuration
+# Yes... You'll find an old version of the actual API Key in commit history ;)... 
+# Call me out on this... I dare you...
 API_URL = os.getenv("API_URL")
 API_KEY = os.getenv("FEEDBACK_API_KEY")
 CSV_FILE = "feedback_data.csv"
